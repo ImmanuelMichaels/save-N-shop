@@ -1,0 +1,437 @@
+.home-container {
+    width: 100%;
+    height: 750px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+.home-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(/public/images/m-header.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.05;
+    z-index: -1;
+}
+
+.items-categories {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    gap: 40px;
+}
+.items-categories::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(/public/images/bann.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.5;
+    z-index: -1;
+    filter: blur(5px); /* You can adjust the px value */
+    
+      
+}
+.items-categories 
+.button
+.cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    background: #000000;
+    color: #FCDC4D;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+.cta-btn:hover {
+    background: #1f60d6;
+  }
+
+
+.essential-boxes {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.essential-boxes .boxes {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+}
+.essential-boxes .boxes:hover {
+    transform: scale(1.05);
+}
+.boxes .images{
+    overflow: hidden;
+    height: 200px;
+    width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.boxes img {
+    width: 200px;
+}
+.essential-boxes .boxes span{
+    font-weight: 800;
+}
+
+.hero-text {
+    width: 100%;
+    position: absolute;
+    top: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+.hero-text h1 {
+    font-size: 3rem;
+    line-height: 50px;
+}
+.hero-text p {
+    width: 600px;
+    padding: 20px;
+}
+
+
+.curve-wrapper {
+    position: relative;
+    width: 100%;
+    height: 750px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    perspective: 1000px;
+    overflow: hidden;
+}
+
+.card {
+    position: absolute;
+    top: 80%;
+    width: 200px;
+    height: 260px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform-origin: bottom center;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    overflow: hidden;
+  
+    /* This is the curve effect */
+    transform: rotate(calc(var(--i) * 22deg - 83deg)) translateY(-180%);
+}
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.curve-wrapper img {
+    width: 300px;
+}
+.button a {
+    text-decoration: none;
+}
+.cta-btn {
+    padding: 18px 24px;
+    border-radius: 30px;
+}
+#shopping {
+    background: #000000;
+    color: #ffffff;
+    font-weight: 600;
+}
+#download-app {
+    border: 1px solid #000000;
+    color: #000000;
+    font-weight: 600;
+}
+
+.sponsors-badge {
+    width: 100%;
+    height: 70px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    position: relative;
+    background: #ffffff;
+    z-index: 0;
+}
+.sponsors-badge::before {
+    content: "";
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background: linear-gradient(to right, rgba(241, 191, 73, 0.308) 0%, transparent 20%, transparent 80%, rgba(241, 191, 73, 0.308) 100%);
+    z-index: 1;
+    pointer-events: none; 
+}
+.sponsors-badge img {
+    width: 50px;
+}
+
+
+/* How its works section */
+.hiw-container {
+    width: 100%;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.hiw-container
+.head-text {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.hiw-container
+.head-text 
+.t-headings {
+    font-size: 3rem;
+    font-weight: 700;
+}
+.hiw-container
+.head-text p {
+    font-size: 1rem;
+    padding: 10px;
+    color: #525252;
+}
+.hiw-container
+.steps-container {
+    width: 100%;
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+    gap: 40px;
+}
+.hiw-container
+.steps-container
+.step-box {
+    overflow: hidden;
+    border-radius: 20px;
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    
+}
+.hiw-container
+.steps-container
+.step-box 
+.image {
+    width: 300px;
+    height: 150px;
+    overflow: hidden;
+}
+.hiw-container
+.steps-container
+img {
+    width: 300px;
+}
+.hiw-container
+.steps-container
+.step-box
+#inner-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    padding-top: 30px;
+    color: #000000;
+}
+.hiw-container
+.steps-container
+.step-box p {
+    width: 300px;
+    font-size: 0.750rem;
+    padding: 10px 20px;
+    color: #525252;
+}
+
+.benefits-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 700px;
+    gap: 40px;
+}
+.benefits-container
+.head-text
+.t-headings {
+    font-size: 3rem;
+    font-weight: 700;
+}
+.benefit-content {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+}
+.benefit {
+    width: 400px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.benefit img {
+    width: 400px;
+}
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 40px;
+}
+.benefits-list
+span {
+    width: 300px;
+}
+.benefits-list
+#list-tag {
+    width: 500px;
+    display: flex;
+    gap: 10px;
+}
+.benefits-list img {
+    width: 20px;
+}
+.main-word-container {
+    height: 800px;
+    display: flex;
+    /* background: blue; */
+    justify-content: center;
+    gap: 70px;
+}
+
+.main-word-container
+.text {
+    width: 500px;
+}
+
+.main-word-container
+.text span {
+    font-size: 3rem;
+    color: #ffffff;
+}
+
+.ads-container{
+    width: 500px;
+    height: 1000px;
+    padding-top: 100px;
+}
+.img-con {
+    height: 500px;
+    display: flex;
+    /* background: #ff6d00; */
+}
+.img-con img {
+    width: 600px;
+    height: 650px;
+}
+
+.ref-tip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tips {
+    background: #ff6d00;
+    width: 80%;
+    height: 500px;
+    border-radius: 30px;
+}
+
+.pricing {
+    width: 100%;
+    height: 700px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.plan-content {
+    display: flex;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+.pricing 
+.plan {
+    width: 400px;
+    height: 200px;
+    background: #ff6d00;
+}
+.testimonial-container {
+    width: 100%;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.testimonial-container
+.head-text {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.testimonial-container
+.head-text 
+.t-headings {
+    font-size: 3rem;
+    font-weight: 700;
+}
+.testimonial-container
+.head-text p {
+    font-size: 1rem;
+    padding: 10px;
+    color: #525252;
+}

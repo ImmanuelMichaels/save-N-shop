@@ -1,0 +1,42 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    align-items: center;
+    width: 100%;
+    z-index: 100;
+    border-top: 1px solid rgba(0, 0, 0, 0.089);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.089);
+}
+.navbar ul {
+    display: flex;
+    gap: 20px;
+    list-style-type: none;
+    color: black;
+}
+.nav-links 
+ul li {
+    text-decoration: none;
+}
+.nav-links 
+ul li span {
+    color: black;
+}
+.logo {
+    font-size: 2rem;
+    font-weight: bolder;
+}
+.button {
+    display: flex;
+    gap: 10px;
+}
+button {
+    padding: 16px;
+    border-radius: 25px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.button #signup {
+    background: #FCDC4D;
+}
