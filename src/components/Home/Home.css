@@ -397,25 +397,44 @@ span {
 /* Subscription Plan */
 .pricing {
     width: 100%;
-    height: 700px;
+    height: auto;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 100px 50px;
+
+    #standard .p-heading {
+        font-size: 1.5rem;
+        color:#ff6d00;
+        font-weight: 700;
+    }
+    #celebrity .p-heading {
+        font-size: 1.5rem;
+        color:#ff0000;
+        font-weight: 700;
+    }
+    #basic .p-heading {
+    font-size: 1.5rem;
+    color:#1f60d6;
+    font-weight: 700;
+    }
 }
 .plan-content {
     display: flex;
     width: 100%;
-    height: 500px;
+    height: auto;
     overflow: hidden;
     gap: 20px;
     align-items: center;
     justify-content: center;
+    gap: 50px;
+    padding: 20px;
 }
 .pricing 
 .plan {
     width: 400px;
-    height: 600px;
+    height: auto;
     background: #ffffff;
     box-shadow: 0px 5px 5px  rgba(0, 0, 0, 0.15);
     border-radius: 20px;
@@ -425,11 +444,17 @@ span {
     align-items: center;
     gap: 10px;
     position: relative;
+    padding-bottom: 50px;
+    padding-top: 150px;
+
+    p{
+        font-size: 0.750rem;
+    }
 }
 .plan::before {
     content: "";
     position: absolute;
-    top: 80px;
+    top: 50px;
     left: 23%;
     width: 80%;
     height: 70px;
@@ -441,7 +466,7 @@ span {
 .plan::after {
     content: "";
     position: absolute;
-    top: 70px;
+    top: 40px;
     left: 23%;
     width: 80%;
     height: 70px;
@@ -475,6 +500,86 @@ span {
 #standard::before {
     background: rgb(255, 136, 0);
 }
+#celebrity::after {
+    content: "Celebrity Plan";
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgb(255, 0, 0);
+}
+#celebrity::before {
+    background: rgb(255, 0, 0);
+}
+.plan 
+.items-holder{
+    width: 250px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    #i{
+    display: flex;
+    justify-self: start;
+    align-items: center;
+    font-size: .800rem;
+    color: #525252;
+    }
+ 
+    svg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50px;
+    overflow: hidden;
+    }
+}
+
+#basic .sub-button{
+    padding: 10px;
+
+ button {
+    border-radius: 0;
+    background-color: #1f60d6;
+    color: #ffffff;
+    cursor: pointer;}
+}
+#standard .sub-button{
+    padding: 10px;
+
+ button {
+    border-radius: 0;
+    background-color: #ff6d00;
+    color: #ffffff;
+    cursor: pointer;}
+}
+#celebrity .sub-button{
+    padding: 10px;
+
+ button {
+    border-radius: 0;
+    background-color: #ff0000;
+    color: #ffffff;
+    cursor: pointer;}
+}
+
+#plan-box {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+
+    span {
+        font-weight: bold;
+    }
+    #italic {
+        font-style: italic;
+    }
+}
+
 
 /* Testimonial Section */
 .testimonial-container {
@@ -505,5 +610,4 @@ span {
     padding: 10px;
     color: #525252;
 }
-
 
