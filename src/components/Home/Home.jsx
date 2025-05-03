@@ -72,10 +72,6 @@ const categories = [
     img: '/images/special-offer.png',
     label: 'Special Offers',
   },
-  {
-    img: '/images/essential-week.png',
-    label: '50% off Home Essentials',
-  },
 ];
 
 
@@ -227,17 +223,19 @@ const Home = () => {
         
         <div className="pricing">
           <div className="head-text">
-            <h3 className='t-headings'>Pricing</h3>
+            <h3 className='t-headings'>Subscription Plan</h3>
             <p>Choose a Plan That Fits Your Pocket - Save Daily, Stocks Up Monthly.</p>
           </div>
           
 
           <div className="plan-content">
-            <div className="plan">
-
+            <div className="plan" id='basic'>
+                <h4 className="p-heading">$50</h4>
+                <p><svg fill="#239a31" width="64px" height="64px" viewBox="-12 -12 48.00 48.00" xmlns="http://www.w3.org/2000/svg" stroke="#239a31" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"></path></g></svg></p>
+                <p><svg width="64px" height="64px" viewBox="-16 -16 64.00 64.00" enable-background="new 0 0 32 32" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ff0000" stroke="#ff0000" stroke-width="0.00032"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Home"></g> <g id="Print"></g> <g id="Mail"></g> <g id="Camera"></g> <g id="Video"></g> <g id="Film"></g> <g id="Message"></g> <g id="Telephone"></g> <g id="User"></g> <g id="File"></g> <g id="Folder"></g> <g id="Map"></g> <g id="Download"></g> <g id="Upload"></g> <g id="Video_Recorder"></g> <g id="Schedule"></g> <g id="Cart"></g> <g id="Setting"></g> <g id="Search"></g> <g id="Pencils"></g> <g id="Group"></g> <g id="Record"></g> <g id="Headphone"></g> <g id="Music_Player"></g> <g id="Sound_On"></g> <g id="Sound_Off"></g> <g id="Lock"></g> <g id="Lock_open"></g> <g id="Love"></g> <g id="Favorite"></g> <g id="Film_1_"></g> <g id="Music"></g> <g id="Puzzle"></g> <g id="Turn_Off"></g> <g id="Book"></g> <g id="Save"></g> <g id="Reload"></g> <g id="Trash"></g> <g id="Tag"></g> <g id="Link"></g> <g id="Like"></g> <g id="Bad"></g> <g id="Gallery"></g> <g id="Add"></g> <g id="Close"> <path d="M26.6,5.4C23.8,2.6,20,1,16,1S8.2,2.6,5.4,5.4C2.6,8.2,1,12,1,16s1.6,7.8,4.4,10.6C8.2,29.4,12,31,16,31 s7.8-1.6,10.6-4.4C29.4,23.8,31,20,31,16S29.4,8.2,26.6,5.4z" fill="#fe0101"></path> <path d="M17.4,16l5-5c0.2-0.2,0.3-0.5,0.3-0.7c0-0.3-0.1-0.5-0.3-0.7c-0.4-0.4-1-0.4-1.4,0l-5,4.9l-5-4.9 c-0.4-0.4-1-0.4-1.4,0c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.7l5,5l-5,5c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.7 c0.2,0.2,0.5,0.3,0.7,0.3c0.3,0,0.5-0.1,0.7-0.3l5-5l5,5c0.2,0.2,0.5,0.3,0.7,0.3c0.3,0,0.5-0.1,0.7-0.3c0.2-0.2,0.3-0.5,0.3-0.7 c0-0.3-0.1-0.5-0.3-0.7L17.4,16z" fill="#ffffff"></path> </g> <g id="Forward"></g> <g id="Back"></g> <g id="Buy"></g> <g id="Mac"></g> <g id="Laptop"></g> </g></svg></p>
             </div>
-            <div className="plan"></div>
-            <div className="plan"></div>
+            <div className="plan" id='standard'></div>
+            <div className="plan" id='celebrity'></div>
           </div>
         </div>
 
