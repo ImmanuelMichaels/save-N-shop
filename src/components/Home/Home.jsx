@@ -109,7 +109,7 @@ const Home = () => {
             <a href="#signup" className="cta-btn" id='download-app'>Download App</a>
           </div>
       </div>
-    {/* HERO SECTION ENDS HERE */}
+  
 
     {/* SPONSORED BADGE STARTS HERE */}
       <div className="sponsors-badge">
@@ -158,7 +158,7 @@ const Home = () => {
             </div>
 
             <div className="benefits-list">
-              <h3 className='t-headings'>Why Save 'n' Shop Work Wonders</h3>
+              <p><b>Why Save 'n' Shop Work Wonders</b></p>
 
               <div id='list-tag'>
                 <img src="/images/pointer-svgrepo-com.svg" alt="" />
@@ -221,7 +221,7 @@ const Home = () => {
           </div>
         </div>
         
-        <div className="pricing">
+        <div className="pricing" id='pricing-section'>
           <div className="head-text">
             <h3 className='t-headings'>Subscription Plan</h3>
             <p>Choose a Plan That Fits Your Pocket - Save Daily, Stocks Up Monthly.</p>
@@ -324,8 +324,32 @@ const Home = () => {
             <h3 className='t-headings'>Real Users, Real Impact.</h3>
             <p>See how others are changing their shopping game - one day at a time.</p>
           </div>
-
+                <div className="real-time">
+                  <p>Get our real time review on google</p>
+                  <div className="image">
+                  
+                  </div>
+                </div>
           
+        </div>
+
+        <div className="contact-us">
+          <div className="contact-text">
+            <h3 className='t-headings'>Have Questions?</h3>
+            <p>We are here to help you. <br/>Reach out to us for any inquiries or support.</p>
+          </div>
+          
+          <div className="contact-form">
+            <div className="form-field">
+              <label htmlFor="name">Full Name</label>
+              <input type="text" />
+            </div>
+            <div className="form-field">
+              <label htmlFor="email">Email</label>
+              <input type="text" />
+            </div>
+            <textarea></textarea>
+          </div>
         </div>
   
     </section>

@@ -10,3 +10,8 @@ box-sizing: border-box;
     --bg-sec-color: #FCDC4D;
     --sub-head-color: #525252; 
 }
+
+.t-headings {
+    font-size: 3rem;
+    font-weight: 700;
+}

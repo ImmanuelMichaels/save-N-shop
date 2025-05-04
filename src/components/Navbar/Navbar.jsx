@@ -11,8 +11,7 @@ const Navbar = () => {
         <li><Link to="/">Home</Link></li>
         <li><HashLink smooth to="/#hiw-section">How it works</HashLink></li>
         <li><HashLink smooth to="/#benefit-section">What's Inside</HashLink></li>
-        <li><Link to="/contact"></Link></li>
-        <li><Link to="/testimonials">Pricing</Link></li>
+        <li><HashLink to="/#pricing-section">Pricing</HashLink></li>
         <li><Link to="/faq">FAQ</Link></li>
       </ul>
       <div className="button">
