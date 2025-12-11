@@ -3,6 +3,8 @@ import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
 import Items from './components/Items/Items';
 import Footer from './components/Footer/Footer';
+import SignUp from './components/Pages/SignUp';
+import Login from './components/Pages/Login';
 import './App.css';
 
 const App = () => {
@@ -13,6 +15,8 @@ const App = () => {
         <Routes>
            <Route path="/" element={<Home />} />
            <Route path="/items" element={<Items />} />
+           <Route path="/SignUp" element={<SignUp />} />
+           <Route path='/Login' element={<Login />} />
         </Routes>
         <Footer />
       </div>

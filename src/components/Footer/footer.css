@@ -3,4 +3,7 @@
     height: auto;
     background-color: black;
     bottom: 0;
+    padding: 150px;
+    display: flex;
+    gap: 100px;
 }

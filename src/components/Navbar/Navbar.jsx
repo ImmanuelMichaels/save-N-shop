@@ -7,16 +7,18 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="logo">Save 'n' Shop</div>
-      <ul className="nav-links">
-        <li><Link to="/">Home</Link></li>
-        <li><HashLink smooth to="/#hiw-section">How it works</HashLink></li>
-        <li><HashLink smooth to="/#benefit-section">What's Inside</HashLink></li>
-        <li><HashLink to="/#pricing-section">Pricing</HashLink></li>
-        <li><Link to="/faq">FAQ</Link></li>
-      </ul>
+      <div className="nav-links">
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><HashLink smooth to="/#hiw-section">How it works</HashLink></li>
+          <li><HashLink smooth to="/#benefit-section">What's Inside</HashLink></li>
+          <li><HashLink smooth to="/#pricing-section">Pricing</HashLink></li>
+          <li><Link to="/faq">FAQ</Link></li>
+        </ul>
+      </div>
       <div className="button">
-        <button id='login'>Login</button>
-        <button id='signup'>Open Account</button>
+        <Link to="/login"><button id='login'>Login</button></Link>
+        <Link to="/signup"><button id='signup'>Open Account</button></Link>
       </div>
     </nav>
   );

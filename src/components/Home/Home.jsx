@@ -1,4 +1,5 @@
 import React, { useRef, useState} from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from "framer-motion"; 
 import './Home.css';
 import 'swiper/css';
@@ -105,8 +106,8 @@ const Home = () => {
             <h1>Save a Little Each Day, <br/>Shop Big Every Month!</h1>
             <p>Smart Shopping Starts Here.<br/> Save Bit By Bit, Shop Big Once a Month with our <br/> Flexible Grocery Plans for Every Lifestyle.</p>
           <div className="button">
-            <a href="#signup" className="cta-btn" id='shopping'>Open account</a>
-            <a href="#signup" className="cta-btn" id='download-app'>Download App</a>
+            <Link to="/SignUp" className="cta-btn" id='shopping'>Open account</Link>
+            <Link to="#signup" className="cta-btn" id='download-app'>Download App</Link>
           </div>
       </div>
   
@@ -125,7 +126,7 @@ const Home = () => {
       <div className="hiw-container" id='hiw-section'>
           <div className="head-text">
             <h3 className='t-headings'>How it Works</h3>
-            <p>How "Save Daily, Shop Monthly" Works</p>
+            <p>How Save Daily, Shop Monthly Works</p>
           </div>
 
         <div className="steps-container">
@@ -158,7 +159,7 @@ const Home = () => {
             </div>
 
             <div className="benefits-list">
-              <p><b>Why Save 'n' Shop Work Wonders</b></p>
+              <p><b>Why Save N Shop Work Wonders</b></p>
 
               <div id='list-tag'>
                 <img src="/images/pointer-svgrepo-com.svg" alt="" />
@@ -172,7 +173,7 @@ const Home = () => {
               </div>
               <div id='list-tag'>
                 <img src="/images/pointer-svgrepo-com.svg" alt="" />
-                <p><b>Purchase Power</b> - Save first, spend smart - never feel broke at month's end.
+                <p><b>Purchase Power</b> - Save first, spend smart - never feel broke at month end.
                 </p>
               </div>
               <div id='list-tag'>
@@ -336,7 +337,7 @@ const Home = () => {
         <div className="contact-us">
           <div className="contact-text">
             <h3 className='t-headings'>Have Questions?</h3>
-            <p>We are here to help you. <br/>Reach out to us for any inquiries or support.</p>
+            <p id='italic'>Reach out to us for any inquiries or support.</p>
           </div>
           
           <div className="contact-form">
@@ -344,11 +345,16 @@ const Home = () => {
               <label htmlFor="name">Full Name</label>
               <input type="text" />
             </div>
+            
             <div className="form-field">
               <label htmlFor="email">Email</label>
               <input type="text" />
             </div>
-            <textarea></textarea>
+            
+            <div className="form-field">
+              <label htmlFor="textarea">How do we help?</label>
+              <textarea></textarea>
+            </div>
           </div>
         </div>
   
