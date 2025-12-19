@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 7rem 0;
   background:whitesmoke;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .success-text {
-  color: #6b7280;
+  color: #34373d;
   margin-bottom: 1.5rem;
 }
 
@@ -101,7 +101,7 @@
 .input-icon {
   position: absolute;
   left: 0.75rem;
-  color: #9ca3af;
+  color: #2b2d30;
   pointer-events: none;
 }
 
@@ -116,8 +116,8 @@
 }
 
 .form-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: #1b1b22;
+  box-shadow: 0 0 0 3px rgba(24, 24, 32, 0.1);
 }
 
 .form-input.input-error {
@@ -165,12 +165,12 @@
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 6px rgba(23, 23, 27, 0.2);
 }
 
 .btn-primary:hover {
   background: #000000dc;
-  box-shadow: 0 6px 8px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 6px 8px rgba(28, 28, 34, 0.3);
 }
 
 .btn-submit {

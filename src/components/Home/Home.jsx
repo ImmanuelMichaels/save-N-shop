@@ -196,8 +196,7 @@ const Home = () => {
             ))}
           </div>
           <div className="button">
-            <a
-              href="#signup"
+            <Link to="/SignUp"
               className="cta-btn group flex items-center gap-2 transition-all duration-300"
               onClick={handleClick}
               onMouseEnter={() => setHovered(true)}
@@ -218,7 +217,7 @@ const Home = () => {
               >
                 →
               </motion.span>
-            </a>
+            </Link>
           </div>
         </div>
         
@@ -255,7 +254,7 @@ const Home = () => {
                 <div id='i'><svg fill="#239a31" width="64px" height="64px" viewBox="-12 -12 48.00 48.00" xmlns="http://www.w3.org/2000/svg" stroke="#239a31" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"></path></g></svg>Maggi/Seasoning Cubes</div>
               </div>
                 <div className="sub-button">
-                  <button>SUBSCRIBE</button>
+                  <Link to="/login"><button>SUBSCRIBE</button></Link>
                 </div>
                 <p><span>Bonus:</span> 1 sachet Milk or Omo on your 3rd month</p>
             </div>
@@ -284,7 +283,7 @@ const Home = () => {
                 <div id='i'><svg fill="#239a31" width="64px" height="64px" viewBox="-12 -12 48.00 48.00" xmlns="http://www.w3.org/2000/svg" stroke="#239a31" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.676,8.237-6,5.5a1,1,0,0,1-1.383-.03l-3-3a1,1,0,1,1,1.414-1.414l2.323,2.323,5.294-4.853a1,1,0,1,1,1.352,1.474Z"></path></g></svg>Maggi/Seasoning Cubes</div>
               </div>
                 <div className="sub-button">
-                  <button>SUBSCRIBE</button>
+                  <Link to="/Login"><button>SUBSCRIBE</button></Link>
                 </div>
                 <p><span>Bonus:</span> 1 free delivery every 2 months</p>
             </div>
@@ -313,7 +312,7 @@ const Home = () => {
                 <div id='i'><span>Optional Add-on:</span>  Milo/Milk/Cornflakes</div>
               </div>
                 <div className="sub-button">
-                  <button>SUBSCRIBE</button>
+                  <Link to="/Login"><button>SUBSCRIBE</button></Link>
                 </div>
                 <p><span>Bonus:</span> 1 Surprise Item + Free Delivery</p>
             </div>

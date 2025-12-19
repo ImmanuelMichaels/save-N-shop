@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 8rem;
   background: whitesmoke;
 }
 
@@ -116,7 +116,7 @@
 }
 
 .form-input:focus {
-  border-color: #667eea;
+  border-color: rgb(12, 13, 14) 24, 29);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
