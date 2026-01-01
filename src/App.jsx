@@ -5,6 +5,7 @@ import Home from './components/Home/Home';
 import Footer from './components/Footer/Footer';
 import SignUp from './components/Pages/SignUp';
 import Login from './components/Pages/Login';
+import ProfilePage from './components/Pages/ProfilePage';
 import PlatformNavbar from './components/Pages/PlatformNavbar';
 import './App.css';
 
@@ -35,6 +36,7 @@ const App = () => {
         } />
         {/* Platform route WITHOUT regular navbar */}
         <Route path="/platform/*" element={<PlatformNavbar />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>
   );

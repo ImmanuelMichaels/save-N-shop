@@ -60,9 +60,60 @@ const PlatformNavbar = () => {
   const [stockAmount, setStockAmount] = useState(20000);
   const [activeBottomNav, setActiveBottomNav] = useState('dashboard');
   const [stockCategory, setStockCategory] = useState('groceries');
+  const [showConversionSummary, setShowConversionSummary] = useState(false);
+  const [, setShowFundingSuccess] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const [showCardDetailsModal, setShowCardDetailsModal] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [showLockModal, setShowLockModal] = useState(false);
+  const [lockAmount, setLockAmount] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [fundAmount, setFundAmount] = useState('');
+  const [timeRemaining, setTimeRemaining] = useState(900);
+  const [conversionData, setConversionData] = useState(null);
+  const [user, setUser] = useState(mockUser);
+  const [transactions, setTransactions] = useState(recentTransactions);
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: '',
+    cardName: '',
+    expiryDate: '',
+    cvv: ''
+  });
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const profileRef = useRef(null);
   const notificationRef = useRef(null);
+  const otpRefs = useRef([]);
+  const timerRef = useRef(null);
+
+  const paymentMethods = [
+    {
+      id: 'bank_transfer',
+      name: 'Bank Transfer',
+      icon: '🏦',
+      description: 'Transfer from your bank account',
+      fee: 'Free',
+      processingTime: 'Instant - 10 minutes'
+    },
+    {
+      id: 'card',
+      name: 'Debit/Credit Card',
+      icon: '💳',
+      description: 'Visa, Mastercard, Verve',
+      fee: '₦50 + 1.5%',
+      processingTime: 'Instant'
+    },
+    {
+      id: 'ussd',
+      name: 'USSD Code',
+      icon: '📞',
+      description: 'Dial *737# to fund',
+      fee: 'Free',
+      processingTime: 'Instant'
+    }
+  ];
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -80,6 +131,294 @@ const PlatformNavbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Countdown timer for conversion with proper cleanup
+  useEffect(() => {
+    if (showConversionSummary && timeRemaining > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            setShowConversionSummary(false);
+            alert('Price lock expired. Please try again.');
+            return 900;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+      };
+    }
+  }, [showConversionSummary, timeRemaining]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getConversionRate = (category) => {
+    const rates = {
+      groceries: 0.95,
+      farmProduce: 0.92,
+      seafoods: 0.90
+    };
+    return rates[category];
+  };
+
+  const handleConvertNow = () => {
+    // Validate balance
+    if (stockAmount > mockUser.availableToStock) {
+      alert(`Insufficient balance. You have ₦${mockUser.availableToStock.toLocaleString()} available to convert.`);
+      return;
+    }
+
+    if (stockAmount < 5000) {
+      alert('Minimum conversion amount is ₦5,000');
+      return;
+    }
+
+    // Store conversion data
+    setConversionData({
+      amount: stockAmount,
+      category: stockCategory,
+      items: generateGroceryList(stockAmount, stockCategory),
+      vendor: getVendorName(stockCategory)
+    });
+
+    setTimeRemaining(900);
+    setShowConversionSummary(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const confirmConversion = () => {
+     const amount = conversionData.amount;
+
+      setUser(prev => ({
+        ...prev,
+        availableToStock: prev.availableToStock - amount,
+        totalBalance: prev.totalBalance - amount
+      }));
+
+      setTransactions(prev => ([
+        {
+          id: Date.now(),
+          type: "Converted",
+          amount,
+          date: new Date().toLocaleDateString(),
+          status: "Converted"
+        },
+        ...prev
+      ]));
+    
+    // Clear timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    clearInterval(timerRef.current);
+    setShowConversionSummary(false);
+    setShowSuccessMessage(true);
+    
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+      setConversionData(null);
+    }, 5000);
+  };
+
+  const cancelConversion = () => {
+    // Clear timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    setShowConversionSummary(false);
+    setTimeRemaining(900);
+    setConversionData(null);
+  };
+
+  const handleAddFunds = () => {
+    setShowAddFundsModal(true);
+    setSelectedPaymentMethod(null);
+    setFundAmount('');
+  };
+
+  const closeAddFundsModal = () => {
+    setShowAddFundsModal(false);
+    setSelectedPaymentMethod(null);
+    setFundAmount('');
+  };
+
+  const handlePaymentMethodSelect = (methodId) => {
+    setSelectedPaymentMethod(methodId);
+  };
+
+  const proceedToPayment = () => {
+    if (!fundAmount || !selectedPaymentMethod) {
+      alert('Please enter an amount and select a payment method');
+      return;
+    }
+
+    const amount = parseFloat(fundAmount);
+    if (amount < 100) {
+      alert('Minimum amount is ₦100');
+      return;
+    }
+
+    if (selectedPaymentMethod === 'card') {
+      setShowCardDetailsModal(true);
+      return;
+    }
+
+    console.log('Processing payment:', {
+      amount: amount,
+      method: selectedPaymentMethod
+    });
+
+    closeAddFundsModal();
+    setShowFundingSuccess(true);
+    
+    setTimeout(() => {
+      setShowFundingSuccess(false);
+    }, 5000);
+  };
+
+  const handleCardInputChange = (field, value) => {
+    let formattedValue = value;
+
+    if (field === 'cardNumber') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 16);
+      formattedValue = formattedValue.match(/.{1,4}/g)?.join(' ') || formattedValue;
+    } else if (field === 'expiryDate') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 4);
+      if (formattedValue.length >= 2) {
+        formattedValue = formattedValue.slice(0, 2) + '/' + formattedValue.slice(2);
+      }
+    } else if (field === 'cvv') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 3);
+    }
+
+    setCardDetails(prev => ({
+      ...prev,
+      [field]: formattedValue
+    }));
+  };
+
+  const validateCardDetails = () => {
+    if (cardDetails.cardNumber.replace(/\s/g, '').length !== 16) {
+      alert('Please enter a valid 16-digit card number');
+      return false;
+    }
+    if (!cardDetails.cardName.trim()) {
+      alert('Please enter cardholder name');
+      return false;
+    }
+    if (cardDetails.expiryDate.length !== 5) {
+      alert('Please enter valid expiry date (MM/YY)');
+      return false;
+    }
+    if (cardDetails.cvv.length !== 3) {
+      alert('Please enter valid CVV');
+      return false;
+    }
+    return true;
+  };
+
+  const handleCardPayment = () => {
+    if (!validateCardDetails()) return;
+
+    setProcessingPayment(true);
+    
+    setTimeout(() => {
+      setProcessingPayment(false);
+      setShowCardDetailsModal(false);
+      setShowOTPModal(true);
+    }, 2000);
+  };
+
+  const handleOTPChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOTP = [...otp];
+    newOTP[index] = value.slice(-1);
+    setOtp(newOTP);
+
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOTPKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const verifyOTP = () => {
+    const otpValue = otp.join('');
+    if (otpValue.length !== 6) {
+      alert('Please enter the complete 6-digit OTP');
+      return;
+    }
+
+    setProcessingPayment(true);
+
+    setTimeout(() => {
+      setProcessingPayment(false);
+      setShowOTPModal(false);
+      closeAddFundsModal();
+      
+      setCardDetails({
+        cardNumber: '',
+        cardName: '',
+        expiryDate: '',
+        cvv: ''
+      });
+      setOtp(['', '', '', '', '', '']);
+
+      setShowFundingSuccess(true);
+      setTimeout(() => {
+        setShowFundingSuccess(false);
+      }, 5000);
+    }, 2000);
+  };
+
+  const closeCardDetailsModal = () => {
+    setShowCardDetailsModal(false);
+    setCardDetails({
+      cardNumber: '',
+      cardName: '',
+      expiryDate: '',
+      cvv: ''
+    });
+  };
+
+  const closeOTPModal = () => {
+    setShowOTPModal(false);
+    setOtp(['', '', '', '', '', '']);
+  };
+
+  const getVendorName = (category) => {
+    const vendors = {
+      groceries: 'ShopRite',
+      farmProduce: 'Fresh Farms Market',
+      seafoods: 'Ocean Fresh Seafoods'
+    };
+    return vendors[category];
+  };
+
+  const getCategoryIcon = (category) => {
+    const icons = {
+      groceries: '🛒',
+      farmProduce: '🌾',
+      seafoods: '🦐'
+    };
+    return icons[category];
+  };
 
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/platform' },
@@ -257,6 +596,430 @@ const PlatformNavbar = () => {
 
         {/* Dashboard Content */}
         <div className="dashboard-content">
+          {/* Card Details Modal */}
+          {showCardDetailsModal && (
+            <>
+              <div className="conversion-overlay" onClick={closeCardDetailsModal}></div>
+              <div className="card-details-modal">
+                <div className="card-details-header">
+                  <h2>Enter Card Details</h2>
+                  <button className="close-btn" onClick={closeCardDetailsModal}>
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="card-preview">
+                  <div className="card-chip">💳</div>
+                  <div className="card-number-display">
+                    {cardDetails.cardNumber || '•••• •••• •••• ••••'}
+                  </div>
+                  <div className="card-info-row">
+                    <div className="card-holder">
+                      <span className="card-label">CARDHOLDER</span>
+                      <span className="card-value">{cardDetails.cardName || 'YOUR NAME'}</span>
+                    </div>
+                    <div className="card-expiry">
+                      <span className="card-label">EXPIRES</span>
+                      <span className="card-value">{cardDetails.expiryDate || 'MM/YY'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="card-form">
+                  <div className="form-group">
+                    <label>Card Number</label>
+                    <input
+                      type="text"
+                      value={cardDetails.cardNumber}
+                      onChange={(e) => handleCardInputChange('cardNumber', e.target.value)}
+                      placeholder="1234 5678 9012 3456"
+                      maxLength="19"
+                      className="card-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Cardholder Name</label>
+                    <input
+                      type="text"
+                      value={cardDetails.cardName}
+                      onChange={(e) => handleCardInputChange('cardName', e.target.value.toUpperCase())}
+                      placeholder="JOHN DOE"
+                      className="card-input"
+                    />
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Expiry Date</label>
+                      <input
+                        type="text"
+                        value={cardDetails.expiryDate}
+                        onChange={(e) => handleCardInputChange('expiryDate', e.target.value)}
+                        placeholder="MM/YY"
+                        maxLength="5"
+                        className="card-input"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>CVV</label>
+                      <input
+                        type="password"
+                        value={cardDetails.cvv}
+                        onChange={(e) => handleCardInputChange('cvv', e.target.value)}
+                        placeholder="123"
+                        maxLength="3"
+                        className="card-input"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>4-Digit PIN</label>
+                    <input
+                      type="password"
+                      value={cardDetails.pin}
+                      onChange={(e) => handleCardInputChange('pin', e.target.value)}
+                      placeholder="••••"
+                      maxLength="4"
+                      className="card-input"
+                    />
+                  </div>
+
+                  <div className="payment-amount-display">
+                    <span>Amount to pay:</span>
+                    <span className="amount-large">
+                      ₦{(parseFloat(fundAmount) + 50 + (parseFloat(fundAmount) * 0.015)).toLocaleString(undefined, {maximumFractionDigits: 2})}
+                    </span>
+                  </div>
+
+                  <button
+                    className="pay-now-btn"
+                    onClick={handleCardPayment}
+                    disabled={processingPayment}
+                  >
+                    {processingPayment ? (
+                      <>
+                        <span className="spinner"></span>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={20} />
+                        Pay Now
+                      </>
+                    )}
+                  </button>
+
+                  <div className="security-note">
+                    🔒 Your payment is secured with 256-bit SSL encryption
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* OTP Modal */}
+          {showOTPModal && (
+            <>
+              <div className="conversion-overlay" onClick={closeOTPModal}></div>
+              <div className="otp-modal">
+                <div className="otp-header">
+                  <div className="otp-icon">📱</div>
+                  <h2>Enter OTP</h2>
+                  <p>We've sent a 6-digit code to your phone number</p>
+                </div>
+
+                <div className="otp-inputs">
+                  {otp.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => (otpRefs.current[index] = el)}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength="1"
+                      value={digit}
+                      onChange={(e) => handleOTPChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOTPKeyDown(index, e)}
+                      className="otp-input"
+                    />
+                  ))}
+                </div>
+
+                <button className="resend-otp">
+                  Didn't receive code? <span>Resend OTP</span>
+                </button>
+
+                <button
+                  className="verify-otp-btn"
+                  onClick={verifyOTP}
+                  disabled={processingPayment}
+                >
+                  {processingPayment ? (
+                    <>
+                      <span className="spinner"></span>
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={20} />
+                      Verify & Complete Payment
+                    </>
+                  )}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Add Funds Modal */}
+          {showAddFundsModal && (
+            <>
+              <div className="conversion-overlay" onClick={closeAddFundsModal}></div>
+              <div className="add-funds-modal">
+                <div className="add-funds-header">
+                  <h2>Add Funds</h2>
+                  <button className="close-btn" onClick={closeAddFundsModal}>
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="add-funds-content">
+                  {/* Amount Input */}
+                  <div className="amount-input-section">
+                    <label>Enter Amount</label>
+                    <div className="amount-input-wrapper">
+                      <span className="currency-symbol">₦</span>
+                      <input
+                        type="number"
+                        value={fundAmount}
+                        onChange={(e) => setFundAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="amount-input"
+                        min="100"
+                      />
+                    </div>
+                    <p className="input-hint">Minimum amount: ₦100</p>
+                  </div>
+
+                  {/* Quick Amount Buttons */}
+                  <div className="quick-amounts">
+                    <button onClick={() => setFundAmount('5000')} className="quick-amount-btn">
+                      ₦5,000
+                    </button>
+                    <button onClick={() => setFundAmount('10000')} className="quick-amount-btn">
+                      ₦10,000
+                    </button>
+                    <button onClick={() => setFundAmount('20000')} className="quick-amount-btn">
+                      ₦20,000
+                    </button>
+                    <button onClick={() => setFundAmount('50000')} className="quick-amount-btn">
+                      ₦50,000
+                    </button>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <div className="payment-methods-section">
+                    <h3>Select Payment Method</h3>
+                    <div className="payment-methods-grid">
+                      {paymentMethods.map((method) => (
+                        <div
+                          key={method.id}
+                          className={`payment-method-card ${selectedPaymentMethod === method.id ? 'selected' : ''}`}
+                          onClick={() => handlePaymentMethodSelect(method.id)}
+                        >
+                          <div className="payment-method-icon">{method.icon}</div>
+                          <div className="payment-method-info">
+                            <h4>{method.name}</h4>
+                            <p className="payment-description">{method.description}</p>
+                            <div className="payment-meta">
+                              <span className="payment-fee">{method.fee}</span>
+                              <span className="payment-time">⏱ {method.processingTime}</span>
+                            </div>
+                          </div>
+                          <div className="payment-check">
+                            {selectedPaymentMethod === method.id && <CheckCircle size={20} />}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Summary */}
+                  {fundAmount && selectedPaymentMethod && (
+                    <div className="payment-summary">
+                      <div className="summary-row">
+                        <span>Amount:</span>
+                        <span className="summary-amount">₦{parseFloat(fundAmount).toLocaleString()}</span>
+                      </div>
+                      {selectedPaymentMethod === 'card' && fundAmount && (
+                        <div className="summary-row">
+                          <span>Transaction Fee:</span>
+                          <span>₦{(50 + (parseFloat(fundAmount) * 0.015)).toFixed(2)}</span>
+                        </div>
+                      )}
+                      {selectedPaymentMethod === 'airtime' && fundAmount && (
+                        <div className="summary-row">
+                          <span>Conversion Fee (5%):</span>
+                          <span>₦{(parseFloat(fundAmount) * 0.05).toFixed(2)}</span>
+                        </div>
+                      )}
+                      {selectedPaymentMethod === 'crypto' && fundAmount && (
+                        <div className="summary-row">
+                          <span>Conversion Fee (2%):</span>
+                          <span>₦{(parseFloat(fundAmount) * 0.02).toFixed(2)}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Proceed Button */}
+                  <button
+                    className="proceed-payment-btn"
+                    onClick={proceedToPayment}
+                    disabled={!fundAmount || !selectedPaymentMethod}
+                  >
+                    Proceed to Payment
+                    <ArrowRight size={20} />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Success Message Card */}
+          {showSuccessMessage && (
+            <div className="success-message-card">
+              <div className="success-icon-large">
+                <CheckCircle size={48} />
+              </div>
+              <h3>Conversion Successful!</h3>
+              <p>Your items will be delivered within 3-5 business days.</p>
+              <div className="success-details">
+                <div className="success-detail-item">
+                  <span className="detail-label">Amount Converted:</span>
+                  <span className="detail-value">₦{stockAmount.toLocaleString()}</span>
+                </div>
+                <div className="success-detail-item">
+                  <span className="detail-label">Category:</span>
+                  <span className="detail-value">
+                    {stockCategory === 'groceries' ? 'Groceries' : 
+                     stockCategory === 'farmProduce' ? 'Farm Produce' : 
+                     'Seafoods'}
+                  </span>
+                </div>
+                <div className="success-detail-item">
+                  <span className="detail-label">Vendor:</span>
+                  <span className="detail-value">
+                    {stockCategory === 'groceries' ? 'ShopRite' : 
+                     stockCategory === 'farmProduce' ? 'Fresh Farms Market' : 
+                     'Ocean Fresh Seafoods'}
+                  </span>
+                </div>
+              </div>
+              <button 
+                className="close-success-btn" 
+                onClick={() => setShowSuccessMessage(false)}
+              >
+                Close
+              </button>
+            </div>
+          )}
+
+          {/* Conversion Summary Modal */}
+          {showConversionSummary && (
+            <>
+              <div className="conversion-overlay" onClick={cancelConversion}></div>
+              <div className="conversion-summary-card">
+                <div className="conversion-summary-header">
+                  <h2>Conversion Summary</h2>
+                  <button className="close-btn" onClick={cancelConversion}>
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="conversion-details">
+                  <div className="conversion-row">
+                    <span className="conversion-label">Total Balance Available</span>
+                    <span className="conversion-value">₦{mockUser.availableToStock.toLocaleString()}</span>
+                  </div>
+
+                  <div className="conversion-row highlight">
+                    <span className="conversion-label">Amount to Convert</span>
+                    <span className="conversion-value large">₦{stockAmount.toLocaleString()}</span>
+                  </div>
+
+                  <div className="conversion-row">
+                    <span className="conversion-label">Category</span>
+                    <span className="conversion-value">
+                      {stockCategory === 'groceries' ? '🛒 Groceries' : 
+                       stockCategory === 'farmProduce' ? '📦 Farm Produce' : 
+                       '🛍️ Seafoods'}
+                    </span>
+                  </div>
+
+                  <div className="conversion-row">
+                    <span className="conversion-label">Conversion Rate</span>
+                    <span className="conversion-value rate">
+                      {(getConversionRate(stockCategory) * 100).toFixed(0)}% value
+                      <small>Wholesale conversion (logistics + vendor discount)</small>
+                      <span className="rate-info">
+                        (₦{(stockAmount * getConversionRate(stockCategory)).toLocaleString()} worth of goods)
+                      </span>
+                    </span>
+                  </div>
+
+                  <div className="conversion-countdown">
+                    <div className="countdown-icon">
+                      <Clock size={20} />
+                    </div>
+                    <div className="countdown-content">
+                      <span className="countdown-label">Price Lock Expires In</span>
+                      <span className={`countdown-timer ${timeRemaining < 60 ? 'warning' : ''}`}>
+                        {formatTime(timeRemaining)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="conversion-items">
+                    <h4>Items You'll Receive:</h4>
+                    <ul className="items-list">
+                      {generateGroceryList(stockAmount, stockCategory).map((item, index) => (
+                        <li key={index}>
+                          <CheckCircle size={16} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="conversion-vendor">
+                    <Package size={18} />
+                    <span>
+                      Vendor: {stockCategory === 'groceries' ? 'ShopRite' : 
+                               stockCategory === 'farmProduce' ? 'Fresh Farms Market' : 
+                               'Ocean Fresh Seafoods'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="conversion-actions">
+                  <button className="cancel-btn" onClick={cancelConversion}>
+                    Cancel
+                  </button>
+                  <button className="confirm-btn" onClick={confirmConversion}>
+                    <CheckCircle size={20} />
+                    Confirm Conversion
+                  </button>
+                </div>
+
+                <p className="conversion-note">
+                  * By confirming, you agree to lock this amount for conversion. This action cannot be reversed.
+                </p>
+              </div>
+            </>
+          )}
+
           {/* Account Summary Card */}
           <div className="account-summary-card">
             <div className="summary-header">
@@ -295,7 +1058,7 @@ const PlatformNavbar = () => {
 
           {/* Primary Actions */}
           <div className="primary-actions">
-            <button className="action-btn primary">
+            <button className="action-btn primary" onClick={handleAddFunds}>
               <Plus size={20} />
               <span>Add Funds</span>
             </button>
@@ -303,7 +1066,7 @@ const PlatformNavbar = () => {
               <ShoppingCart size={20} />
               <span>Convert to Groceries</span>
             </button>
-            <button className="action-btn accent">
+            <button className="action-btn accent" onClick={() => setShowLockModal(true)}>
               <Lock size={20} />
               <span>Lock Savings</span>
             </button>
@@ -418,7 +1181,7 @@ const PlatformNavbar = () => {
                       ))}
                     </ul>
                   </div>
-                  <button className="convert-btn">
+                  <button className="convert-btn" onClick={handleConvertNow}>
                     Convert Now
                     <ArrowRight size={18} />
                   </button>
