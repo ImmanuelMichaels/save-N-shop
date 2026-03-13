@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Home, DollarSign, ShoppingCart, CreditCard, Settings, LogOut, User, Bell, Search, Lock, TrendingUp, Package, Calendar, AlertCircle, Plus, ArrowRight, CheckCircle, Clock, ShoppingBag, History, UserCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Menu, X, Home, DollarSign, ShoppingCart, CreditCard, Settings, LogOut, User, Bell, Search, Lock, TrendingUp, Package, Calendar, AlertCircle, Plus, ArrowRight, CheckCircle, Clock, ShoppingBag, History, UserCircle, BarChart2 } from 'lucide-react';
 import './PlatformNavbar.css';
 
 // Mock user data
@@ -53,7 +54,13 @@ const monthlyTrends = [
   { month: "Dec", amount: 100 }
 ];
 
-const PlatformNavbar = () => {
+const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotifications, unreadCount, markAllRead, markOneRead }) => {
+  const navigate = useNavigate();
+
+  // Use real logged-in user if available, fall back to mock
+  const displayUser = propUser || mockUser;
+  const notifList = propNotifications || notifications;
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -67,6 +74,17 @@ const PlatformNavbar = () => {
   const [showCardDetailsModal, setShowCardDetailsModal] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [showLockModal, setShowLockModal] = useState(false);
+  const [showConvertModal, setShowConvertModal] = useState(false);
+  const [showStockListModal, setShowStockListModal] = useState(false);
+  const [convertCategory, setConvertCategory] = useState('groceries');
+  const [convertAmount, setConvertAmount] = useState(5000);
+  const [lockBucket, setLockBucket] = useState('');
+  const [lockDuration, setLockDuration] = useState('');
+  const [lockPin, setLockPin] = useState('');
+  const [lockConfirmPin, setLockConfirmPin] = useState('');
+  const [lockSuccess, setLockSuccess] = useState(false);
+  const [lockAmountInput, setLockAmountInput] = useState('');
+  const [buckets, setBuckets] = useState(savingsBuckets);
   const [lockAmount, setLockAmount] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [fundAmount, setFundAmount] = useState('');
@@ -425,6 +443,8 @@ const PlatformNavbar = () => {
     { icon: DollarSign, label: 'Savings', path: '/platform/savings' },
     { icon: ShoppingCart, label: 'Shopping', path: '/platform/shopping' },
     { icon: CreditCard, label: 'Transactions', path: '/platform/transactions' },
+    { icon: BarChart2, label: 'Analytics', path: '/savings-analytics' },
+    { icon: History, label: 'History', path: '/dashboard' },
     { icon: Settings, label: 'Settings', path: '/platform/settings' },
   ];
 
@@ -482,9 +502,9 @@ const PlatformNavbar = () => {
           {menuItems.map((item, index) => (
             <button
               key={index}
-              className={`menu-item ${index === 0 ? 'active' : ''}`}
+              className={`menu-item ${item.label === 'History' ? 'history-link' : index === 0 ? 'active' : ''}`}
               onClick={() => {
-                console.log(`Navigate to ${item.path}`);
+                navigate(item.path);
                 setSidebarOpen(false);
               }}
             >
@@ -495,7 +515,7 @@ const PlatformNavbar = () => {
         </nav>
 
         <div className="logout-section">
-          <button className="logout-btn" onClick={() => console.log('Logout')}>
+          <button className="logout-btn" onClick={() => { onLogout && onLogout(); navigate('/login'); }}>
             <LogOut size={20} />
             <span>Logout</span>
           </button>
@@ -514,7 +534,7 @@ const PlatformNavbar = () => {
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <h1 className="welcome-text">
-              Welcome back, <span className="welcome-name">{mockUser.name.split(' ')[0]}</span>
+              Welcome back, <span className="welcome-name">{displayUser.name.split(' ')[0]}</span>
             </h1>
           </div>
 
@@ -536,23 +556,34 @@ const PlatformNavbar = () => {
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <Bell size={20} />
-                <span className="notification-badge"></span>
+                {(unreadCount ?? notifList.filter(n => !n.read).length) > 0 && (
+                  <span className="notification-badge">
+                    {unreadCount ?? notifList.filter(n => !n.read).length}
+                  </span>
+                )}
               </button>
               
               {showNotifications && (
                 <div className="notifications-dropdown">
                   <div className="notifications-header">
                     <h3>Notifications</h3>
-                    <button className="mark-read">Mark all read</button>
+                    <button className="mark-read" onClick={() => { markAllRead && markAllRead(); }}>
+                      Mark all read
+                    </button>
                   </div>
                   <div className="notifications-list">
-                    {notifications.map(notif => (
-                      <div key={notif.id} className="notification-item">
+                    {notifList.map(notif => (
+                      <div
+                        key={notif.id}
+                        className={`notification-item ${notif.read ? 'read' : 'unread'}`}
+                        onClick={() => markOneRead && markOneRead(notif.id)}
+                      >
                         <div className={`priority-badge ${notif.priority}`}></div>
                         <div className="notification-content">
                           <p>{notif.message}</p>
                           <span className="notification-time">{notif.time}</span>
                         </div>
+                        {!notif.read && <div className="notif-dot" />}
                       </div>
                     ))}
                   </div>
@@ -567,11 +598,11 @@ const PlatformNavbar = () => {
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
               >
                 <div className="profile-avatar">
-                  {mockUser.name.split(' ').map(n => n[0]).join('')}
+                  {displayUser.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div className="profile-info">
-                  <div className="profile-name">{mockUser.name}</div>
-                  <div className="profile-email">{mockUser.email}</div>
+                  <div className="profile-name">{displayUser.name}</div>
+                  <div className="profile-email">{displayUser.email}</div>
                 </div>
               </button>
 
@@ -585,7 +616,8 @@ const PlatformNavbar = () => {
                   <span>Settings</span>
                 </button>
                 <div className="dropdown-divider"></div>
-                <button className="dropdown-item" style={{color: '#ef4444'}}>
+                <button className="dropdown-item" style={{color: '#ef4444'}}
+                  onClick={() => { onLogout && onLogout(); navigate('/login'); }}>
                   <LogOut size={18} />
                   <span>Logout</span>
                 </button>
@@ -1020,6 +1052,341 @@ const PlatformNavbar = () => {
             </>
           )}
 
+          {/* ═══════════════════════════════════════════════════ */}
+          {/* CONVERT TO GROCERIES MODAL                          */}
+          {/* ═══════════════════════════════════════════════════ */}
+          {showConvertModal && (
+            <>
+              <div className="conversion-overlay" onClick={() => setShowConvertModal(false)}></div>
+              <div className="conversion-summary-card">
+                <div className="conversion-summary-header">
+                  <h2>Convert to Groceries</h2>
+                  <button className="close-btn" onClick={() => setShowConvertModal(false)}><X size={24} /></button>
+                </div>
+
+                {/* Category */}
+                <div className="category-selector" style={{marginBottom: '1.25rem'}}>
+                  {[
+                    { key: 'groceries',  icon: '🛒', label: 'Groceries',    vendor: 'ShopRite' },
+                    { key: 'farmProduce',icon: '🌾', label: 'Farm Produce', vendor: 'Fresh Farms' },
+                    { key: 'seafoods',   icon: '🦐', label: 'Seafoods',     vendor: 'Ocean Fresh' },
+                  ].map(c => (
+                    <button
+                      key={c.key}
+                      className={`category-btn ${convertCategory === c.key ? 'active' : ''}`}
+                      onClick={() => setConvertCategory(c.key)}
+                    >
+                      <span>{c.icon}</span> {c.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Amount slider */}
+                <div className="amount-selector" style={{marginBottom: '1.25rem'}}>
+                  <label>Amount to Convert</label>
+                  <input
+                    type="range"
+                    min="5000"
+                    max={user.availableToStock || mockUser.availableToStock}
+                    step="1000"
+                    value={convertAmount}
+                    onChange={e => setConvertAmount(Number(e.target.value))}
+                    className="amount-slider"
+                  />
+                  <div className="amount-display">₦{convertAmount.toLocaleString()}</div>
+                  <p style={{fontSize:'0.75rem', color:'#64748b', marginTop:'0.25rem'}}>
+                    Available: ₦{(user.availableToStock || mockUser.availableToStock).toLocaleString()}
+                  </p>
+                </div>
+
+                {/* Preview list */}
+                <div className="conversion-details">
+                  <div className="conversion-row">
+                    <span className="conversion-label">Vendor</span>
+                    <span className="conversion-value">
+                      {convertCategory === 'groceries' ? 'ShopRite' : convertCategory === 'farmProduce' ? 'Fresh Farms Market' : 'Ocean Fresh Seafoods'}
+                    </span>
+                  </div>
+                  <div className="conversion-row highlight">
+                    <span className="conversion-label">You'll Receive (est.)</span>
+                    <span className="conversion-value large">₦{(convertAmount * getConversionRate(convertCategory)).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div className="conversion-items" style={{marginTop:'1rem'}}>
+                  <h4>Auto-Generated List:</h4>
+                  <ul className="items-list">
+                    {generateGroceryList(convertAmount, convertCategory).map((item, i) => (
+                      <li key={i}><CheckCircle size={16} />{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="conversion-actions" style={{marginTop:'1.5rem'}}>
+                  <button className="cancel-btn" onClick={() => setShowConvertModal(false)}>Cancel</button>
+                  <button className="confirm-btn" onClick={() => {
+                    setStockCategory(convertCategory);
+                    setStockAmount(convertAmount);
+                    setShowConvertModal(false);
+                    setTimeout(() => {
+                      setConversionData({
+                        amount: convertAmount,
+                        category: convertCategory,
+                        items: generateGroceryList(convertAmount, convertCategory),
+                        vendor: getVendorName(convertCategory)
+                      });
+                      setTimeRemaining(900);
+                      setShowConversionSummary(true);
+                    }, 100);
+                  }}>
+                    <CheckCircle size={20} />
+                    Proceed to Confirm
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ═══════════════════════════════════════════════════ */}
+          {/* VIEW STOCK LIST MODAL                              */}
+          {/* ═══════════════════════════════════════════════════ */}
+          {showStockListModal && (
+            <>
+              <div className="conversion-overlay" onClick={() => setShowStockListModal(false)}></div>
+              <div className="stock-list-modal">
+                <div className="conversion-summary-header">
+                  <h2>My Stock List</h2>
+                  <button className="close-btn" onClick={() => setShowStockListModal(false)}><X size={24} /></button>
+                </div>
+
+                <p style={{fontSize:'0.8rem', color:'#64748b', marginBottom:'1.25rem'}}>
+                  Active and pending grocery conversions
+                </p>
+
+                <div className="stock-list-items">
+                  {transactions.filter(t => t.status === 'Converted' || t.status === 'Delivered').length === 0 ? (
+                    <div className="stock-list-empty">
+                      <Package size={40} style={{color:'#d1d5db', marginBottom:'0.75rem'}} />
+                      <p>No stock orders yet</p>
+                      <span>Convert your savings to see items here</span>
+                    </div>
+                  ) : (
+                    transactions.filter(t => t.status === 'Converted' || t.status === 'Delivered').map(tx => (
+                      <div key={tx.id} className="stock-list-row">
+                        <div className={`stock-status-icon ${tx.status.toLowerCase()}`}>
+                          {tx.status === 'Converted' ? <ShoppingCart size={18} /> : <Package size={18} />}
+                        </div>
+                        <div className="stock-list-info">
+                          <p className="stock-list-type">{tx.type}</p>
+                          <span className="stock-list-date">{tx.date}</span>
+                        </div>
+                        <div className="stock-list-right">
+                          <p className="stock-list-amount">₦{tx.amount.toLocaleString()}</p>
+                          <span className={`transaction-status ${tx.status.toLowerCase()}`}>{tx.status}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Summary */}
+                <div className="stock-list-summary">
+                  <div className="stock-sum-row">
+                    <span>Total Converted</span>
+                    <strong>₦{transactions.filter(t=>t.status==='Converted').reduce((s,t)=>s+t.amount,0).toLocaleString()}</strong>
+                  </div>
+                  <div className="stock-sum-row">
+                    <span>Total Delivered</span>
+                    <strong style={{color:'#10b981'}}>₦{transactions.filter(t=>t.status==='Delivered').reduce((s,t)=>s+t.amount,0).toLocaleString()}</strong>
+                  </div>
+                </div>
+
+                <button className="close-success-btn" onClick={() => setShowStockListModal(false)}>Close</button>
+              </div>
+            </>
+          )}
+
+          {/* ═══════════════════════════════════════════════════ */}
+          {/* LOCK SAVINGS MODAL                                 */}
+          {/* ═══════════════════════════════════════════════════ */}
+          {showLockModal && (
+            <>
+              <div className="conversion-overlay" onClick={() => { setShowLockModal(false); setLockSuccess(false); setLockPin(''); setLockConfirmPin(''); setLockAmountInput(''); setLockBucket(''); setLockDuration(''); }}></div>
+              <div className="conversion-summary-card">
+                {lockSuccess ? (
+                  <div style={{textAlign:'center', padding:'1rem 0'}}>
+                    <div className="success-icon-large" style={{margin:'0 auto 1rem'}}>
+                      <CheckCircle size={48} />
+                    </div>
+                    <h3 style={{fontSize:'1.375rem', fontWeight:700, color:'#1e293b', marginBottom:'0.5rem'}}>Savings Locked!</h3>
+                    <p style={{color:'#64748b', marginBottom:'1.5rem'}}>
+                      ₦{Number(lockAmountInput).toLocaleString()} has been locked for {lockDuration}.
+                    </p>
+                    <button className="confirm-btn" style={{width:'100%'}} onClick={() => {
+                      setShowLockModal(false);
+                      setLockSuccess(false);
+                      setLockPin(''); setLockConfirmPin('');
+                      setLockAmountInput(''); setLockBucket(''); setLockDuration('');
+                    }}>Done</button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="conversion-summary-header">
+                      <h2>Lock Savings</h2>
+                      <button className="close-btn" onClick={() => { setShowLockModal(false); setLockPin(''); setLockConfirmPin(''); setLockAmountInput(''); setLockBucket(''); setLockDuration(''); }}><X size={24} /></button>
+                    </div>
+
+                    <div className="conversion-details">
+                      {/* Bucket selector */}
+                      <div className="form-group" style={{marginBottom:'1rem'}}>
+                        <label style={{fontSize:'0.875rem', fontWeight:600, color:'#1e293b', display:'block', marginBottom:'0.5rem'}}>
+                          Select Savings Bucket *
+                        </label>
+                        <select
+                          value={lockBucket}
+                          onChange={e => setLockBucket(e.target.value)}
+                          className="card-input"
+                          style={{width:'100%'}}
+                        >
+                          <option value="">-- Choose a bucket --</option>
+                          {buckets.filter(b => !b.locked).map(b => (
+                            <option key={b.id} value={b.id}>
+                              {b.name} — ₦{b.balance.toLocaleString()} available
+                            </option>
+                          ))}
+                        </select>
+                        {buckets.filter(b=>!b.locked).length === 0 && (
+                          <p style={{color:'#f59e0b', fontSize:'0.75rem', marginTop:'0.375rem'}}>All buckets are already locked.</p>
+                        )}
+                      </div>
+
+                      {/* Amount */}
+                      <div className="form-group" style={{marginBottom:'1rem'}}>
+                        <label style={{fontSize:'0.875rem', fontWeight:600, color:'#1e293b', display:'block', marginBottom:'0.5rem'}}>
+                          Amount to Lock *
+                        </label>
+                        <div className="amount-input-wrapper">
+                          <span className="currency-symbol">₦</span>
+                          <input
+                            type="number"
+                            value={lockAmountInput}
+                            onChange={e => setLockAmountInput(e.target.value)}
+                            placeholder="0.00"
+                            className="amount-input"
+                            min="500"
+                          />
+                        </div>
+                        {lockBucket && (
+                          <p style={{fontSize:'0.75rem', color:'#64748b', marginTop:'0.25rem'}}>
+                            Max: ₦{(buckets.find(b=>String(b.id)===String(lockBucket))?.balance || 0).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Lock duration */}
+                      <div className="form-group" style={{marginBottom:'1rem'}}>
+                        <label style={{fontSize:'0.875rem', fontWeight:600, color:'#1e293b', display:'block', marginBottom:'0.5rem'}}>
+                          Lock Duration *
+                        </label>
+                        <div style={{display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:'0.5rem'}}>
+                          {['1 Month', '3 Months', '6 Months', '12 Months'].map(d => (
+                            <button
+                              key={d}
+                              onClick={() => setLockDuration(d)}
+                              style={{
+                                padding:'0.625rem',
+                                border: lockDuration === d ? '2px solid #000' : '1px solid #e5e7eb',
+                                borderRadius:'0.5rem',
+                                background: lockDuration === d ? '#000' : '#fff',
+                                color: lockDuration === d ? '#fff' : '#374151',
+                                fontWeight: lockDuration === d ? 700 : 500,
+                                fontSize:'0.8rem',
+                                cursor:'pointer',
+                                transition:'all 0.15s'
+                              }}
+                            >{d}</button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* PIN */}
+                      <div className="form-group" style={{marginBottom:'0.75rem'}}>
+                        <label style={{fontSize:'0.875rem', fontWeight:600, color:'#1e293b', display:'block', marginBottom:'0.5rem'}}>
+                          Transaction PIN *
+                        </label>
+                        <input
+                          type="password"
+                          value={lockPin}
+                          onChange={e => setLockPin(e.target.value.replace(/\D/,'').slice(0,4))}
+                          placeholder="••••"
+                          maxLength={4}
+                          className="card-input"
+                          style={{width:'100%'}}
+                        />
+                      </div>
+                      <div className="form-group" style={{marginBottom:'1rem'}}>
+                        <label style={{fontSize:'0.875rem', fontWeight:600, color:'#1e293b', display:'block', marginBottom:'0.5rem'}}>
+                          Confirm PIN *
+                        </label>
+                        <input
+                          type="password"
+                          value={lockConfirmPin}
+                          onChange={e => setLockConfirmPin(e.target.value.replace(/\D/,'').slice(0,4))}
+                          placeholder="••••"
+                          maxLength={4}
+                          className="card-input"
+                          style={{width:'100%'}}
+                        />
+                        {lockPin && lockConfirmPin && lockPin !== lockConfirmPin && (
+                          <p style={{color:'#ef4444', fontSize:'0.75rem', marginTop:'0.25rem'}}>PINs do not match</p>
+                        )}
+                      </div>
+
+                      <div style={{background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'0.5rem', padding:'0.75rem', fontSize:'0.78rem', color:'#92400e', marginBottom:'1rem'}}>
+                        🔒 Locked savings cannot be withdrawn before the lock period ends.
+                      </div>
+                    </div>
+
+                    <div className="conversion-actions">
+                      <button className="cancel-btn" onClick={() => { setShowLockModal(false); setLockPin(''); setLockConfirmPin(''); setLockAmountInput(''); setLockBucket(''); setLockDuration(''); }}>
+                        Cancel
+                      </button>
+                      <button
+                        className="confirm-btn"
+                        disabled={!lockBucket || !lockAmountInput || !lockDuration || lockPin.length !== 4 || lockPin !== lockConfirmPin}
+                        style={{opacity: (!lockBucket || !lockAmountInput || !lockDuration || lockPin.length !== 4 || lockPin !== lockConfirmPin) ? 0.5 : 1}}
+                        onClick={() => {
+                          const amount = Number(lockAmountInput);
+                          const bucket = buckets.find(b => String(b.id) === String(lockBucket));
+                          if (!bucket || amount > bucket.balance || amount < 500) {
+                            alert('Invalid amount. Check your bucket balance.');
+                            return;
+                          }
+                          // Lock the bucket and deduct amount
+                          setBuckets(prev => prev.map(b =>
+                            String(b.id) === String(lockBucket)
+                              ? { ...b, locked: true, balance: b.balance - amount }
+                              : b
+                          ));
+                          setTransactions(prev => [{
+                            id: Date.now(),
+                            type: 'Locked',
+                            amount,
+                            date: new Date().toLocaleDateString('en-NG'),
+                            status: 'Locked'
+                          }, ...prev]);
+                          setLockSuccess(true);
+                        }}
+                      >
+                        <Lock size={18} /> Lock Now
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+
           {/* Account Summary Card */}
           <div className="account-summary-card">
             <div className="summary-header">
@@ -1062,7 +1429,7 @@ const PlatformNavbar = () => {
               <Plus size={20} />
               <span>Add Funds</span>
             </button>
-            <button className="action-btn secondary">
+            <button className="action-btn secondary" onClick={() => setShowConvertModal(true)}>
               <ShoppingCart size={20} />
               <span>Convert to Groceries</span>
             </button>
@@ -1074,7 +1441,7 @@ const PlatformNavbar = () => {
               <ArrowRight size={20} />
               <span>Withdraw</span>
             </button>
-            <button className="action-btn outline">
+            <button className="action-btn outline" onClick={() => setShowStockListModal(true)}>
               <Package size={20} />
               <span>View Stock List</span>
             </button>
@@ -1084,7 +1451,7 @@ const PlatformNavbar = () => {
           <div className="savings-buckets">
             <h3 className="section-title">Savings Buckets</h3>
             <div className="buckets-grid">
-              {savingsBuckets.map(bucket => (
+              {buckets.map(bucket => (
                 <div key={bucket.id} className="bucket-card">
                   <div className="bucket-header">
                     <h4>{bucket.name}</h4>
@@ -1113,9 +1480,8 @@ const PlatformNavbar = () => {
             </div>
           </div>
 
-          {/* Two Column Layout */}
-          <div className="two-column-layout">
-            {/* Left Column */}
+          {/* Main Content — single column */}
+          <div className="single-column-layout">
             <div className="left-column">
               {/* Stock Conversion Section */}
               <div className="stock-conversion-card">
@@ -1215,79 +1581,6 @@ const PlatformNavbar = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right Column */}
-            <div className="right-column">
-              {/* Rules & Discipline Panel */}
-              <div className="rules-card">
-                <h3 className="section-title">Savings Rules & Discipline</h3>
-                <div className="compliance-score">
-                  <div className="score-circle">
-                    <span className="score-value">81%</span>
-                  </div>
-                  <span className="score-label">Overall Compliance</span>
-                </div>
-                
-                <div className="rules-list">
-                  {savingsRules.map(rule => (
-                    <div key={rule.id} className={`rule-item ${rule.status}`}>
-                      <div className="rule-header">
-                        <span className="rule-name">{rule.name}</span>
-                        <span className="rule-compliance">{rule.compliance}%</span>
-                      </div>
-                      <div className="rule-progress">
-                        <div 
-                          className="rule-progress-fill" 
-                          style={{width: `${rule.compliance}%`}}
-                        ></div>
-                      </div>
-                      {rule.status === 'warning' && (
-                        <div className="rule-warning">
-                          <AlertCircle size={14} />
-                          <span>Below target - needs attention</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Insights */}
-              <div className="insights-card">
-                <h3 className="section-title">Savings Insights</h3>
-                
-                <div className="trend-chart">
-                  <h4>Monthly Trend</h4>
-                  <div className="chart-bars">
-                    {monthlyTrends.map((data, index) => (
-                      <div key={index} className="chart-bar-wrapper">
-                        <div className="chart-bar" style={{height: `${data.amount}%`}}>
-                          <span className="bar-tooltip">₦{data.amount}k</span>
-                        </div>
-                        <span className="bar-label">{data.month}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="insights-metrics">
-                  <div className="metric-item">
-                    <TrendingUp size={20} className="metric-icon green" />
-                    <div className="metric-content">
-                      <span className="metric-label">Inflation Protection</span>
-                      <span className="metric-value">12.5% saved</span>
-                    </div>
-                  </div>
-                  <div className="metric-item">
-                    <DollarSign size={20} className="metric-icon blue" />
-                    <div className="metric-content">
-                      <span className="metric-label">Value Preserved</span>
-                      <span className="metric-value">₦98,750</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1297,7 +1590,13 @@ const PlatformNavbar = () => {
             <button
               key={item.key}
               className={`bottom-nav-item ${activeBottomNav === item.key ? 'active' : ''}`}
-              onClick={() => setActiveBottomNav(item.key)}
+              onClick={() => {
+                if (item.key === 'history') {
+                  navigate('/dashboard');
+                } else {
+                  setActiveBottomNav(item.key);
+                }
+              }}
             >
               <item.icon size={22} />
               <span>{item.label}</span>

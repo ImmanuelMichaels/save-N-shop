@@ -1,21 +1,21 @@
 import React from "react";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Bell,
-  Search,
-  User,
-  Settings,
-  LogOut
-} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Phone, MapPin, Bell, Search, Settings, LogOut } from "lucide-react";
 
-const ProfilePage = () => {
-  const user = {
-    name: "Adebayo Johnson",
-    email: "adebayo.j@email.com",
-    phone: "+234 801 234 5678",
-    location: "Lagos, Nigeria"
+const ProfilePage = ({ user, onLogout }) => {
+  const navigate = useNavigate();
+
+  // Fallback so the page never crashes if props aren't passed yet
+  const displayUser = user || {
+    name: "Guest User",
+    email: "—",
+    phone: "—",
+    location: "—",
+  };
+
+  const handleLogout = () => {
+    onLogout();           // clears user in App
+    navigate("/login");   // send them back to login
   };
 
   return (
@@ -24,7 +24,10 @@ const ProfilePage = () => {
       <header className="top-navbar">
         <div className="nav-left">
           <h1 className="welcome-text">
-            Profile — <span className="welcome-name">{user.name.split(" ")[0]}</span>
+            Profile —{" "}
+            <span className="welcome-name">
+              {displayUser.name.split(" ")[0]}
+            </span>
           </h1>
         </div>
 
@@ -32,28 +35,24 @@ const ProfilePage = () => {
           {/* Search Box */}
           <div className="search-box">
             <Search className="search-icon" size={18} />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search..."
-            />
+            <input type="text" className="search-input" placeholder="Search..." />
           </div>
 
-          {/* Notifications (static for now) */}
+          {/* Notifications */}
           <button className="icon-btn">
             <Bell size={20} />
             <span className="notification-badge"></span>
           </button>
 
-          {/* Profile */}
+          {/* Profile dropdown */}
           <div className="profile-section">
             <div className="profile-btn">
               <div className="profile-avatar">
-                {user.name.split(" ").map(n => n[0]).join("")}
+                {displayUser.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <div className="profile-info">
-                <div className="profile-name">{user.name}</div>
-                <div className="profile-email">{user.email}</div>
+                <div className="profile-name">{displayUser.name}</div>
+                <div className="profile-email">{displayUser.email}</div>
               </div>
             </div>
 
@@ -63,7 +62,12 @@ const ProfilePage = () => {
                 <span>Settings</span>
               </button>
               <div className="dropdown-divider"></div>
-              <button className="dropdown-item" style={{ color: "#ef4444" }}>
+              {/* ── Logout now actually works ── */}
+              <button
+                className="dropdown-item"
+                style={{ color: "#ef4444" }}
+                onClick={handleLogout}
+              >
                 <LogOut size={18} />
                 <span>Logout</span>
               </button>
@@ -75,12 +79,12 @@ const ProfilePage = () => {
       {/* Profile Body */}
       <section className="profile-body">
         <div className="profile-card">
-          <h2>{user.name}</h2>
+          <h2>{displayUser.name}</h2>
 
           <div className="profile-meta">
-            <p><Mail size={16} /> {user.email}</p>
-            <p><Phone size={16} /> {user.phone}</p>
-            <p><MapPin size={16} /> {user.location}</p>
+            <p><Mail size={16} /> {displayUser.email}</p>
+            <p><Phone size={16} /> {displayUser.phone}</p>
+            <p><MapPin size={16} /> {displayUser.location}</p>
           </div>
         </div>
       </section>
