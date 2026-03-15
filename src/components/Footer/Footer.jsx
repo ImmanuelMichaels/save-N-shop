@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import './Footer.css'; 
 
 
-const footer = () => {
+const Footer = () => {
   return (
     <div className="footer-container">
       <div className="logo-side">
@@ -34,4 +34,4 @@ const footer = () => {
   )
 }
 
-export default footer
+export default Footer
