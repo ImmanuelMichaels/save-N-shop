@@ -11,6 +11,7 @@ box-sizing: border-box;
     --success-color: #095c27;
     --bg-sec-color: #FCDC4D;
     --sub-head-color: #525252; 
+    --major-decision-color: #10b981;
 }
 
 .t-headings {

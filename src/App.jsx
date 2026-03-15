@@ -7,6 +7,7 @@ import SignUp from './components/Pages/SignUp';
 import Login from './components/Pages/Login';
 import PlatformNavbar from './components/Pages/PlatformNavbar';
 import Dashboard from './components/Pages/Dashboard';
+import ProfilePage from './components/Pages/ProfilePage'; 
 import './App.css';
 
 // ── Shared notifications live here so both pages see the same data ──────────
@@ -76,6 +77,13 @@ const App = () => {
         <Route path="/dashboard" element={
           <ProtectedRoute user={user}>
             <Dashboard user={user} onLogout={handleLogout} {...notificationProps} />
+          </ProtectedRoute>
+        } />
+        
+        
+        <Route path="/profile" element={
+          <ProtectedRoute user={user}>
+            <ProfilePage user={user} onLogout={handleLogout} />
           </ProtectedRoute>
         } />
 

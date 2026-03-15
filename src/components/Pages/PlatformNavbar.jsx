@@ -439,21 +439,22 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
   };
 
   const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/platform' },
-    { icon: DollarSign, label: 'Savings', path: '/platform/savings' },
-    { icon: ShoppingCart, label: 'Shopping', path: '/platform/shopping' },
-    { icon: CreditCard, label: 'Transactions', path: '/platform/transactions' },
-    { icon: BarChart2, label: 'Analytics', path: '/savings-analytics' },
-    { icon: History, label: 'History', path: '/dashboard' },
-    { icon: Settings, label: 'Settings', path: '/platform/settings' },
+    { icon: Home,        label: 'Dashboard',   path: '/platform'              },
+    { icon: DollarSign,  label: 'Savings',     path: '/platform/savings'      },
+    { icon: ShoppingCart,label: 'Shopping',    path: '/platform/shopping'     },
+    { icon: CreditCard,  label: 'Transactions',path: '/platform/transactions' },
+    { icon: BarChart2,   label: 'Analytics',   path: '/savings-analytics'     },
+    { icon: History,     label: 'History',     path: '/dashboard'             },
+    { icon: UserCircle,  label: 'Profile',     path: '/profile'               },
+    { icon: Settings,    label: 'Settings',    path: '/platform/settings'     },
   ];
 
   const bottomNavItems = [
-    { icon: Home, label: 'Dashboard', key: 'dashboard' },
-    { icon: DollarSign, label: 'Save', key: 'save' },
-    { icon: Package, label: 'Stock', key: 'stock' },
-    { icon: History, label: 'History', key: 'history' },
-    { icon: UserCircle, label: 'Profile', key: 'profile' }
+    { icon: Home,       label: 'Dashboard', key: 'dashboard', path: null         },
+    { icon: DollarSign, label: 'Save',      key: 'save',      path: null         },
+    { icon: Package,    label: 'Stock',     key: 'stock',     path: null         },
+    { icon: History,    label: 'History',   key: 'history',   path: '/dashboard' },
+    { icon: UserCircle, label: 'Profile',   key: 'profile',   path: '/profile'   },
   ];
 
   const generateGroceryList = (amount, category) => {
@@ -607,11 +608,11 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
               </button>
 
               <div className={`profile-dropdown ${showProfileMenu ? 'show' : ''}`}>
-                <button className="dropdown-item">
+                <button className="dropdown-item" onClick={() => { navigate('/profile'); setShowProfileMenu(false); }}>
                   <User size={18} />
                   <span>My Profile</span>
                 </button>
-                <button className="dropdown-item">
+                <button className="dropdown-item" onClick={() => { navigate('/platform/settings'); setShowProfileMenu(false); }}>
                   <Settings size={18} />
                   <span>Settings</span>
                 </button>
@@ -1591,8 +1592,8 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
               key={item.key}
               className={`bottom-nav-item ${activeBottomNav === item.key ? 'active' : ''}`}
               onClick={() => {
-                if (item.key === 'history') {
-                  navigate('/dashboard');
+                if (item.path) {
+                  navigate(item.path);
                 } else {
                   setActiveBottomNav(item.key);
                 }
