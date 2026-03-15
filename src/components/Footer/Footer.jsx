@@ -1,15 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
-// import './Footer.css'; 
-
+import './Footer.css';
 
 const Footer = () => {
   return (
     <div className="footer-container">
-      <div className="logo-side">
-
-      </div>
+      <div className="logo-side"></div>
 
       <div className="footer-links">
         <ul className="footer-links-list">
@@ -20,6 +17,7 @@ const Footer = () => {
           <li><Link to="/faq">FAQ</Link></li>
         </ul>
       </div>
+
       <div className="footer-links">
         <ul className="footer-links-list">
           <li><Link to="/">Privacy Policy</Link></li>
@@ -27,11 +25,10 @@ const Footer = () => {
           <li><Link to="/">Contact Us</Link></li>
         </ul>
       </div>
-      <div className="footer-links">
-        
-      </div>
+
+      <div className="footer-links"></div>
     </div>
-  )
+  );
 }
 
-export default Footer
+export default Footer;
