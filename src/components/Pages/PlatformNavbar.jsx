@@ -189,12 +189,10 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
   };
 
   const handleConvertNow = () => {
-    // Validate balance
-    if (stockAmount > mockUser.availableToStock) {
-      alert(`Insufficient balance. You have ₦${mockUser.availableToStock.toLocaleString()} available to convert.`);
+    if (stockAmount > user.availableToStock) {
+      alert(`Insufficient balance. You have ₦${user.availableToStock.toLocaleString()} available to convert.`);
       return;
     }
-
     if (stockAmount < 5000) {
       alert('Minimum conversion amount is ₦5,000');
       return;
@@ -292,17 +290,23 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
       return;
     }
 
-    console.log('Processing payment:', {
-      amount: amount,
-      method: selectedPaymentMethod
-    });
+    // Update live balances
+    setUser(prev => ({
+      ...prev,
+      totalBalance: prev.totalBalance + amount,
+      availableToStock: prev.availableToStock + amount,
+    }));
+    setTransactions(prev => [{
+      id: Date.now(),
+      type: 'Added Funds',
+      amount,
+      date: new Date().toLocaleDateString('en-NG'),
+      status: 'Completed'
+    }, ...prev]);
 
     closeAddFundsModal();
     setShowFundingSuccess(true);
-    
-    setTimeout(() => {
-      setShowFundingSuccess(false);
-    }, 5000);
+    setTimeout(() => setShowFundingSuccess(false), 5000);
   };
 
   const handleCardInputChange = (field, value) => {
@@ -389,19 +393,27 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
       setProcessingPayment(false);
       setShowOTPModal(false);
       closeAddFundsModal();
-      
-      setCardDetails({
-        cardNumber: '',
-        cardName: '',
-        expiryDate: '',
-        cvv: ''
-      });
+
+      const amount = parseFloat(fundAmount) || 0;
+
+      setUser(prev => ({
+        ...prev,
+        totalBalance: prev.totalBalance + amount,
+        availableToStock: prev.availableToStock + amount,
+      }));
+      setTransactions(prev => [{
+        id: Date.now(),
+        type: 'Added Funds',
+        amount,
+        date: new Date().toLocaleDateString('en-NG'),
+        status: 'Completed'
+      }, ...prev]);
+
+      setCardDetails({ cardNumber: '', cardName: '', expiryDate: '', cvv: '' });
       setOtp(['', '', '', '', '', '']);
 
       setShowFundingSuccess(true);
-      setTimeout(() => {
-        setShowFundingSuccess(false);
-      }, 5000);
+      setTimeout(() => setShowFundingSuccess(false), 5000);
     }, 2000);
   };
 
@@ -974,7 +986,7 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
                 <div className="conversion-details">
                   <div className="conversion-row">
                     <span className="conversion-label">Total Balance Available</span>
-                    <span className="conversion-value">₦{mockUser.availableToStock.toLocaleString()}</span>
+                    <span className="conversion-value">₦{user.availableToStock.toLocaleString()}</span>
                   </div>
 
                   <div className="conversion-row highlight">
@@ -1088,15 +1100,15 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
                   <input
                     type="range"
                     min="5000"
-                    max={user.availableToStock || mockUser.availableToStock}
+                    max={user.availableToStock || 5000}
                     step="1000"
-                    value={convertAmount}
+                    value={Math.min(convertAmount, user.availableToStock || 5000)}
                     onChange={e => setConvertAmount(Number(e.target.value))}
                     className="amount-slider"
                   />
                   <div className="amount-display">₦{convertAmount.toLocaleString()}</div>
                   <p style={{fontSize:'0.75rem', color:'#64748b', marginTop:'0.25rem'}}>
-                    Available: ₦{(user.availableToStock || mockUser.availableToStock).toLocaleString()}
+                    Available: ₦{user.availableToStock.toLocaleString()}
                   </p>
                 </div>
 
@@ -1369,6 +1381,11 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
                               ? { ...b, locked: true, balance: b.balance - amount }
                               : b
                           ));
+                          setUser(prev => ({
+                            ...prev,
+                            lockedSavings: prev.lockedSavings + amount,
+                            availableToStock: Math.max(0, prev.availableToStock - amount),
+                          }));
                           setTransactions(prev => [{
                             id: Date.now(),
                             type: 'Locked',
@@ -1394,32 +1411,43 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
               <h2>Account Summary</h2>
               <div className="countdown-badge">
                 <Calendar size={16} />
-                <span>Next stock: {mockUser.nextStockDate}</span>
+                <span>Next stock: {user.nextStockDate}</span>
               </div>
             </div>
             
             <div className="balance-grid">
               <div className="balance-item">
                 <span className="balance-label">Total Balance</span>
-                <h3 className="balance-amount">₦{mockUser.totalBalance.toLocaleString()}</h3>
+                <h3 className="balance-amount">₦{user.totalBalance.toLocaleString()}</h3>
               </div>
               <div className="balance-item">
                 <span className="balance-label">Locked Savings</span>
-                <h3 className="balance-amount locked">₦{mockUser.lockedSavings.toLocaleString()}</h3>
+                <h3 className="balance-amount locked">₦{user.lockedSavings.toLocaleString()}</h3>
               </div>
               <div className="balance-item">
                 <span className="balance-label">Available to Stock</span>
-                <h3 className="balance-amount available">₦{mockUser.availableToStock.toLocaleString()}</h3>
+                <h3 className="balance-amount available">₦{user.availableToStock.toLocaleString()}</h3>
               </div>
             </div>
 
             <div className="progress-section">
               <div className="progress-header">
                 <span>Savings Progress</span>
-                <span className="progress-percentage">{mockUser.savingsProgress}%</span>
+                <span className="progress-percentage">
+                  {user.totalBalance > 0
+                    ? Math.min(100, Math.round((user.lockedSavings / user.totalBalance) * 100))
+                    : 0}%
+                </span>
               </div>
               <div className="progress-bar">
-                <div className="progress-fill" style={{width: `${mockUser.savingsProgress}%`}}></div>
+                <div
+                  className="progress-fill"
+                  style={{
+                    width: user.totalBalance > 0
+                      ? `${Math.min(100, Math.round((user.lockedSavings / user.totalBalance) * 100))}%`
+                      : '0%'
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -1518,9 +1546,9 @@ const PlatformNavbar = ({ user: propUser, onLogout, notifications: propNotificat
                   <input 
                     type="range" 
                     min="5000" 
-                    max={mockUser.availableToStock} 
+                    max={user.availableToStock || 5000} 
                     step="1000"
-                    value={stockAmount}
+                    value={Math.min(stockAmount, user.availableToStock || 5000)}
                     onChange={(e) => setStockAmount(Number(e.target.value))}
                     className="amount-slider"
                   />

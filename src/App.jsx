@@ -8,6 +8,7 @@ import Login from './components/Pages/Login';
 import PlatformNavbar from './components/Pages/PlatformNavbar';
 import Dashboard from './components/Pages/Dashboard';
 import ProfilePage from './components/Pages/ProfilePage'; 
+import SettingsPage from './components/Pages/SettingsPage';
 import './App.css';
 
 // ── Shared notifications live here so both pages see the same data ──────────
@@ -80,10 +81,17 @@ const App = () => {
           </ProtectedRoute>
         } />
         
-        
+         {/* User profile page */}
         <Route path="/profile" element={
           <ProtectedRoute user={user}>
             <ProfilePage user={user} onLogout={handleLogout} />
+          </ProtectedRoute>
+        } />
+
+        {/* Settings page */}
+        <Route path="/settings" element={
+          <ProtectedRoute user={user}>
+            <SettingsPage user={user} onLogout={handleLogout} />
           </ProtectedRoute>
         } />
 

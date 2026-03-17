@@ -1,0 +1,522 @@
+/* ─── Import shared design tokens from ProfilePage ─────────────────────── */
+/* All pf- classes come from ProfilePage.css — import it in your app.      */
+/* This file adds only Settings-specific extensions.                        */
+
+/* ─── User mini-card ────────────────────────────────────────────────────── */
+.st-user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 55%, #0f3460 100%);
+  margin: 1rem;
+  border-radius: 1rem;
+  padding: 1.125rem 1.25rem;
+  box-shadow: 0 4px 16px rgba(15,15,50,0.18);
+}
+
+.st-user-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.st-user-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.st-user-email {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ─── Danger row ────────────────────────────────────────────────────────── */
+.st-danger-row:hover { background: #fff5f5 !important; }
+
+/* ─── Right slot ────────────────────────────────────────────────────────── */
+.st-row-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ─── Toggle switch ─────────────────────────────────────────────────────── */
+.st-toggle {
+  width: 44px; height: 24px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.25s;
+  flex-shrink: 0;
+}
+.st-toggle.on  { background: #667eea; }
+.st-toggle.off { background: #d1d5db; }
+
+.st-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: left 0.25s;
+}
+.st-toggle.on  .st-toggle-thumb { left: calc(100% - 21px); }
+.st-toggle.off .st-toggle-thumb { left: 3px; }
+
+/* ─── Radio button ──────────────────────────────────────────────────────── */
+.st-radio {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.st-radio.selected {
+  border-color: #667eea;
+  background: #667eea;
+}
+.st-radio.selected::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ─── Shared input ───────────────────────────────────────────────────────── */
+.st-input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.st-input:focus { border-color: #667eea; }
+.st-input-full { width: 100%; display: block; margin-top: 0.5rem; }
+
+.st-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.st-naira {
+  position: absolute;
+  left: 1rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.st-input-wrap .st-input {
+  padding-left: 1.75rem;
+  width: 100%;
+}
+
+/* ─── Select ────────────────────────────────────────────────────────────── */
+.st-select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.st-select:focus { border-color: #667eea; }
+
+/* ─── PIN keypad ─────────────────────────────────────────────────────────── */
+.st-steps {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.st-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+.st-step.active, .st-step.past { opacity: 1; }
+
+.st-step-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.st-step.active .st-step-dot { background: #667eea; color: #fff; }
+.st-step.past   .st-step-dot { background: #10b981; color: #fff; }
+
+.st-step span {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.2;
+}
+.st-step.active span { color: #667eea; font-weight: 600; }
+
+.st-pin-label {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1.25rem;
+}
+
+.st-pin-dots {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.st-pin-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.st-pin-dot.filled {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.st-err {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-bottom: 0.75rem;
+}
+
+.st-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.625rem;
+  margin-bottom: 0.5rem;
+}
+
+.st-key {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.st-key:active  { background: #667eea18; transform: scale(0.96); }
+.st-key-blank   { background: transparent; border-color: transparent; cursor: default; }
+.st-key-del     { font-size: 1rem; color: #667eea; }
+
+/* ─── Done / success screen ──────────────────────────────────────────────── */
+.st-done-screen {
+  text-align: center;
+  padding: 0.5rem 0 1rem;
+}
+.st-done-circle {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: #dcfce7;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem;
+}
+.st-done-screen h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+.st-done-screen p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.55;
+}
+
+/* ─── Security score bar ─────────────────────────────────────────────────── */
+.st-score-bar {
+  background: #f9fafb;
+  border-radius: 0.875rem;
+  padding: 1rem;
+}
+.st-score-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 0.625rem;
+}
+.st-score-info strong { font-weight: 700; }
+.st-score-track {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.st-score-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+.st-score-tip {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* ─── Feedback type tabs ─────────────────────────────────────────────────── */
+.st-type-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+.st-type-tab {
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.st-type-tab.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: #fff;
+}
+
+/* ─── Theme grid ─────────────────────────────────────────────────────────── */
+.st-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+.st-theme-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.875rem;
+  padding: 1.125rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.st-theme-card.active {
+  border-color: #667eea;
+  background: #f0f4ff;
+  color: #667eea;
+}
+.st-theme-check {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── Accent colour dots ─────────────────────────────────────────────────── */
+.st-accent-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.st-accent-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.st-accent-dot.active {
+  border-color: #111827;
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ─── About page ─────────────────────────────────────────────────────────── */
+.st-about-logo {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.st-about-name {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+.st-about-version {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-bottom: 0.25rem;
+}
+.st-about-val {
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── Warning box (Close Account) ────────────────────────────────────────── */
+.st-warning-box {
+  display: flex;
+  gap: 0.75rem;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.st-warning-box strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #ef4444;
+  margin-bottom: 0.25rem;
+}
+.st-warning-box p {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.st-cancel-link {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* ─── Sign out confirmation ──────────────────────────────────────────────── */
+.st-signout-body {
+  text-align: center;
+  padding: 1.5rem;
+}
+.st-signout-body h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+.st-signout-body p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.st-signout-btns {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.st-cancel-btn {
+  flex: 1;
+  padding: 0.875rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.625rem;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.st-cancel-btn:hover { background: #f9fafb; }
+
+.st-confirm-btn {
+  flex: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.st-confirm-btn:hover { opacity: 0.88; }
+
+.st-signout-row:hover { background: #fff5f5; }
+
+/* ─── Stars (reused from ProfilePage) ───────────────────────────────────── */
+.pf-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.375rem;
+  margin: 0.5rem 0 1rem;
+}
+.pf-star {
+  font-size: 2.25rem;
+  background: none;
+  border: none;
+  color: #d1d5db;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s, transform 0.15s;
+}
+.pf-star.active { color: #f59e0b; }
+.pf-star:hover  { transform: scale(1.15); }
+
+.pf-rate-comment {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.625rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  color: #374151;
+  transition: border-color 0.2s;
+}
+.pf-rate-comment:focus { border-color: #667eea; }
